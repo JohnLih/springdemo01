@@ -1,0 +1,56 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.dao.IUserDao">
+    <insert id="insert">
+      INSERT INTO t_user(name,password) VALUES
+      (#{name},#{password})
+    </insert>
+
+    <resultMap id="userResult" type="User">
+        <id property="userId" column="userId"/>
+        <collection property="properties" javaType="ArrayList" column="userId" ofType="UserProperty" select="queryProperty"/>
+    </resultMap>
+
+    <select id="queryProperty" resultType="UserProperty">
+      SELECT u_id AS userId,
+      `name`,
+      `value`
+      FROM t_user_property
+      WHERE u_id = #{user_id}
+    </select>
+
+    <select id="queryAll" resultMap="userResult">
+        SELECT
+        `u_id` as userId,
+        `name`,
+        `password`,
+        `create_time`
+        FROM t_user
+        LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="queryById" resultMap="userResult">
+        SELECT
+          `u_id` as userId,
+          `name`,
+          `password`,
+          `create_time`
+        FROM t_user 
+        WHERE t_user.u_id=#{userId}
+    </select>
+
+    <select id="queryByName" resultMap="userResult">
+        SELECT
+        `u_id` as userId,
+        `name`,
+        `password`,
+        `create_time`
+        FROM t_user
+        WHERE t_user.name=#{name}
+    </select>
+    
+    <delete id="delete">
+      DELETE FROM t_user WHERE u_id=#{userId}
+    </delete>
+</mapper>
